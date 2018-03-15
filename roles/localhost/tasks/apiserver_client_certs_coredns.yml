@@ -1,0 +1,30 @@
+- name: apiserver client coredns certs directory
+  tags: cert
+  file:
+    path: "{{ apiserver_client_certs_coredns }}/{{ item }}"
+    state: directory
+  with_items:      
+    - "{{ groups['coredns'] }}"
+
+- name: apiserver client coredns key
+  tags: cert
+  openssl_privatekey:
+    path: "{{ apiserver_client_certs_coredns }}/{{ item }}/key.pem"
+  with_items:      
+    - "{{ groups['coredns'] }}"
+
+- name: apiserver client coredns csr
+  tags: cert
+  openssl_csr:
+    path: "{{ apiserver_client_certs_coredns }}/{{ item }}/cert.csr"
+    privatekey_path: "{{ apiserver_client_certs_coredns }}/{{ item }}/key.pem"
+    common_name: "{{ item }}"
+  with_items:      
+    - "{{ groups['coredns'] }}"
+
+# this task will always generate new certs to cover previous certs
+- name: apiserver client coredns cert
+  tags: cert
+  shell: openssl x509 -req -days 365 -in {{ apiserver_client_certs_coredns }}/{{ item }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ apiserver_client_certs_coredns }}/{{ item }}/cert.pem
+  with_items:      
+    - "{{ groups['coredns'] }}"

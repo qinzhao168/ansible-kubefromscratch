@@ -1,0 +1,30 @@
+- name: apiserver client kube-router certs directory
+  tags: cert
+  file:
+    path: "{{ apiserver_client_certs_kube_router }}/{{ item }}"
+    state: directory
+  with_items:      
+    - "{{ groups['kube-router'] }}"
+
+- name: apiserver client kube-router key
+  tags: cert
+  openssl_privatekey:
+    path: "{{ apiserver_client_certs_kube_router }}/{{ item }}/key.pem"
+  with_items:      
+    - "{{ groups['kube-router'] }}"
+
+- name: apiserver client kube-router csr
+  tags: cert
+  openssl_csr:
+    path: "{{ apiserver_client_certs_kube_router }}/{{ item }}/cert.csr"
+    privatekey_path: "{{ apiserver_client_certs_kube_router }}/{{ item }}/key.pem"
+    common_name: "{{ item }}"
+  with_items:      
+    - "{{ groups['kube-router'] }}"
+
+# this task will always generate new certs to cover previous certs
+- name: apiserver client kube-router cert
+  tags: cert
+  shell: openssl x509 -req -days 365 -in {{ apiserver_client_certs_kube_router }}/{{ item }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ apiserver_client_certs_kube_router }}/{{ item }}/cert.pem
+  with_items:      
+    - "{{ groups['kube-router'] }}"

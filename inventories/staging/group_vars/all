@@ -1,0 +1,33 @@
+topdir: "{{ playbook_dir }}/output/staging"
+
+build_path: "{{ topdir }}/build"
+log_path: "{{ topdir }}/log"
+
+certs_path: "{{ topdir }}/certs"
+
+ca_path: "{{ certs_path }}/ca"
+
+etcd_certs_path: "{{ certs_path }}"
+etcd_client_certs_path: "{{ etcd_certs_path }}/etcd-client"
+etcd_server_certs_path: "{{ etcd_certs_path }}/etcd-server"
+etcd_peer_certs_path: "{{ etcd_certs_path }}/etcd-peer"
+
+serviceAccount_path: "{{ certs_path }}/serviceAccount"
+
+kubelet_certs_path: "{{ certs_path }}/kubelet"
+
+kubelet_client_certs_path: "{{ certs_path }}/kubelet-client"
+
+apiserver_certs_path: "{{ certs_path }}/apiserver"
+
+apiserver_client_certs_controller: "{{ certs_path }}/apiserver-client/controller"
+apiserver_client_certs_scheduler: "{{ certs_path }}/apiserver-client/scheduler"
+apiserver_client_certs_kubelet: "{{ certs_path }}/apiserver-client/kubelet"
+apiserver_client_certs_coredns: "{{ certs_path }}/apiserver-client/coredns"
+apiserver_client_certs_kube_router: "{{ certs_path }}/apiserver-client/kube-router"
+apiserver_client_certs_user: "{{ certs_path }}/apiserver-client/user"
+
+users:
+  admin:
+    name: "admin"
+    org: "system:masters"
