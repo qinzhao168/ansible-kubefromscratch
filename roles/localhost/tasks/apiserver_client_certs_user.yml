@@ -23,5 +23,5 @@
 # this task will always generate new certs to cover previous certs
 - name: apiserver client user cert
   tags: cert
-  shell: openssl x509 -req -days 365 -in {{ apiserver_client_certs_user }}/{{ item.key }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ apiserver_client_certs_user }}/{{ item.key }}/cert.pem
+  shell: if [ -f {{ apiserver_client_certs_user }}/{{ item.key }}/cert.pem ];then exit;else  openssl x509 -req -days 365 -in {{ apiserver_client_certs_user }}/{{ item.key }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ apiserver_client_certs_user }}/{{ item.key }}/cert.pem;fi
   with_dict: "{{ users }}"

@@ -19,12 +19,20 @@
     path: "{{ apiserver_client_certs_coredns }}/{{ item }}/cert.csr"
     privatekey_path: "{{ apiserver_client_certs_coredns }}/{{ item }}/key.pem"
     common_name: "{{ item }}"
+    organization_name: "system:masters"
+  with_items:      
+    - "{{ groups['coredns'] }}"
+
+- name: apiserver req extensions  
+  template:
+    src: extention.conf.j2
+    dest: "{{ apiserver_client_certs_coredns }}/{{ item }}/extention.conf"
   with_items:      
     - "{{ groups['coredns'] }}"
 
 # this task will always generate new certs to cover previous certs
 - name: apiserver client coredns cert
   tags: cert
-  shell: openssl x509 -req -days 365 -in {{ apiserver_client_certs_coredns }}/{{ item }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ apiserver_client_certs_coredns }}/{{ item }}/cert.pem
+  shell: if [ -f {{ apiserver_client_certs_coredns }}/{{ item }}/cert.pem ];then exit; else  openssl x509 -req -days 365 -in {{ apiserver_client_certs_coredns }}/{{ item }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ apiserver_client_certs_coredns }}/{{ item }}/cert.pem -extensions v3_ca -extfile {{ apiserver_client_certs_coredns }}/{{ item }}/extention.conf; fi
   with_items:      
     - "{{ groups['coredns'] }}"

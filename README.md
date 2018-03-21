@@ -3,11 +3,13 @@ layout: default
 title:  README
 author: lijiaocn
 createdate: 2018/03/15 21:23:00
-changedate: 2018/03/15 21:46:47
+changedate: 2018/03/19 20:55:19
 
 ---
 
 尚未完成，暂时保存，以防丢失...
+
+## 准备
 
 创建python运行环境：
 
@@ -19,8 +21,14 @@ changedate: 2018/03/15 21:46:47
 
 第一次运行时，指定用户并输入密码，本地的公钥匙`~/.ssh/id_rsa.pub`会被添加到目标机器中，之后可以免密码登录。
 
-	ansible-playbook -u vagrant -k -i inventories/staging/hosts all.yml
+	ansible-playbook -u vagrant -k -i inventories/staging/hosts remote.yml
 
-第二次，直接使用root用户，免密码：
+之后可以直接使用root用户，免密码：
 
 	ansible all -u root -i inventories/staging/hosts -m command -a "pwd"
+
+## 在本地执行
+
+在本地执行时，代码编译、生成证书等。
+
+	ansible-playbook -i inventories/staging/hosts localhost.yml

@@ -22,9 +22,16 @@
   with_items:      
     - "{{ groups['kubelet'] }}"
 
+- name: kubelet req extensions  
+  template:
+    src: extention.conf.j2
+    dest: "{{ kubelet_certs_path }}/{{ item }}/extention.conf"
+  with_items:      
+    - "{{ groups['kubelet'] }}"
+
 # this task will always generate new certs to cover previous certs
 - name: kubelet cert
   tags: cert
-  shell: openssl x509 -req -days 365 -in {{ kubelet_certs_path }}/{{ item }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ kubelet_certs_path }}/{{ item }}/cert.pem
+  shell: if [ -f {{ kubelet_certs_path }}/{{ item }}/cert.pem ];then exit; else  openssl x509 -req -days 365 -in {{ kubelet_certs_path }}/{{ item }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ kubelet_certs_path }}/{{ item }}/cert.pem -extensions v3_ca -extfile {{ kubelet_certs_path }}/{{ item }}/extention.conf; fi
   with_items:      
     - "{{ groups['kubelet'] }}"

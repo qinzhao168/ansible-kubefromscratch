@@ -1,33 +1,33 @@
 [etcd]
 192.168.40.11
 192.168.40.12
-192.168.40.13
+192.168.40.10
 
-[apiserver]
+[master]
 192.168.40.11
 192.168.40.12
-192.168.40.13
+192.168.40.10
 
-[kubelet]
+[node]
 192.168.40.11
 192.168.40.12
-192.168.40.13
+192.168.40.10
 
 [coredns]
-192.168.40.11
-192.168.40.12
-192.168.40.13
+#192.168.40.11
+#192.168.40.12
+#192.168.40.10
 
 [kube-router]
 192.168.40.11
 192.168.40.12
-192.168.40.13
+192.168.40.10
 
 #############   group's group   ##############  
 
 [etcd_client:children]
 etcd
-apiserver
+master
 
 [etcd_server:children]
 etcd
@@ -35,11 +35,17 @@ etcd
 [etcd_peer:children]
 etcd
 
-[kubelet_client:children]
-apiserver
+[apiserver:children]
+master
 
 [controller:children]
-apiserver
+master
 
 [scheduler:children]
-apiserver
+master
+
+[kubelet_client:children]
+master
+
+[kubelet:children]
+node

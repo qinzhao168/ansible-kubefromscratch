@@ -43,4 +43,3 @@
 - import_tasks: apiserver_client_certs_coredns.yml
 - import_tasks: apiserver_client_certs_kube_router.yml
 - import_tasks: apiserver_client_certs_user.yml
-- import_tasks: build.yml

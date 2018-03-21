@@ -22,9 +22,16 @@
   with_items:      
     - "{{ groups['apiserver'] }}"
 
+- name: apiserver req extensions  
+  template:
+    src: extention.conf.j2
+    dest: "{{ apiserver_certs_path }}/{{ item }}/extention.conf"
+  with_items:      
+    - "{{ groups['apiserver'] }}"
+
 # this task will always generate new certs to cover previous certs
 - name: apiserver cert
   tags: cert
-  shell: openssl x509 -req -days 365 -in {{ apiserver_certs_path }}/{{ item }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ apiserver_certs_path }}/{{ item }}/cert.pem
+  shell: if [ -f {{ apiserver_certs_path }}/{{ item }}/cert.pem ];then exit; else openssl x509 -req -days 365 -in {{ apiserver_certs_path }}/{{ item }}/cert.csr -CA {{ ca_path }}/ca.pem  -CAkey {{ ca_path }}/key.pem -CAcreateserial -out {{ apiserver_certs_path }}/{{ item }}/cert.pem  -extensions v3_ca -extfile {{ apiserver_certs_path }}/{{ item }}/extention.conf; fi
   with_items:      
     - "{{ groups['apiserver'] }}"
