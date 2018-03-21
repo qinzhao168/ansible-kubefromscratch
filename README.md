@@ -3,7 +3,7 @@ layout: default
 title:  README
 author: lijiaocn
 createdate: 2018/03/15 21:23:00
-changedate: 2018/03/21 18:41:03
+changedate: 2018/03/21 18:53:52
 
 ---
 
@@ -37,4 +37,4 @@ ssh登陆证书上传：
 
 ## 远程部署
 
-	ansible-playbook -i inventories/staging/hosts site.yml
+	ansible-playbook -u root -i inventories/staging/hosts site.yml
